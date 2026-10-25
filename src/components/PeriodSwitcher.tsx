@@ -16,10 +16,10 @@ export const PeriodSwitcher = observer(function PeriodSwitcher() {
   const setPeriod = (p: PeriodType) => settingsStore.setPeriod(p);
   return (
     <Wrapper>
-      <Button $variant={settingsStore.period === 'week' ? 'primary' : 'secondary'} onClick={() => setPeriod('week')}>
+      <Button aria-pressed={settingsStore.period === 'week'} $variant={settingsStore.period === 'week' ? 'primary' : 'secondary'} onClick={() => setPeriod('week')}>
         Неделя
       </Button>
-      <Button $variant={settingsStore.period === 'month' ? 'primary' : 'secondary'} onClick={() => setPeriod('month')}>
+      <Button aria-pressed={settingsStore.period === 'month'} $variant={settingsStore.period === 'month' ? 'primary' : 'secondary'} onClick={() => setPeriod('month')}>
         Месяц
       </Button>
     </Wrapper>

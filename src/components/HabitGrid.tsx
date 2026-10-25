@@ -1,48 +1,9 @@
-import { useMemo } from 'react';
 import { observer } from 'mobx-react-lite';
 import { habitsStore, settingsStore } from '@/store';
 import { Card } from '@/components/ui';
 import { SPACING } from '@/styles/theme';
 import styled from 'styled-components';
-import type { PeriodType } from '@/types';
-
-function dateOnly(d: Date): string {
-  return d.toISOString().slice(0, 10);
-}
-
-function isFutureDay(d: Date): boolean {
-  const today = dateOnly(new Date());
-  return dateOnly(d) > today;
-}
-
-function getDaysForPeriod(period: PeriodType, offset: number): Date[] {
-  const days: Date[] = [];
-  const now = new Date();
-  if (period === 'week') {
-    const start = new Date(now);
-    start.setDate(now.getDate() - start.getDay() + 1 + offset * 7);
-    for (let i = 0; i < 7; i++) {
-      const d = new Date(start);
-      d.setDate(start.getDate() + i);
-      days.push(d);
-    }
-  } else {
-    const year = now.getFullYear();
-    const month = now.getMonth() + offset;
-    const m = ((month % 12) + 12) % 12;
-    const y = year + Math.floor(month / 12);
-    const first = new Date(y, m, 1);
-    const last = new Date(y, m + 1, 0);
-    const start = new Date(first);
-    start.setDate(start.getDate() - start.getDay() + 1);
-    const end = new Date(last);
-    end.setDate(end.getDate() + (6 - end.getDay()));
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      days.push(new Date(d));
-    }
-  }
-  return days;
-}
+import { dateKey, getDaysForPeriod } from '@/shared/lib/dates';
 
 const GridWrap = styled.div`
   margin-top: ${SPACING.md}px;
@@ -128,7 +89,7 @@ export const HabitGrid = observer(function HabitGrid({
   periodLabel: string;
 }) {
   const period = settingsStore.period;
-  const days = useMemo(() => getDaysForPeriod(period, periodOffset), [period, periodOffset]);
+  const days = getDaysForPeriod(period, periodOffset);
   const habits = habitsStore.habits;
 
   return (
@@ -147,7 +108,7 @@ export const HabitGrid = observer(function HabitGrid({
       ) : (
         <>
           {habits.map((h) => (
-            <HabitRow key={h.id}>
+            <HabitRow key={h.id} role="group" aria-label={`Отметки: ${h.name}`}>
               <HabitLabel $color={h.color} style={{ minWidth: 120 }}>
                 <span className="dot" />
                 <span>{h.icon} {h.name}</span>
@@ -155,12 +116,13 @@ export const HabitGrid = observer(function HabitGrid({
               <DaysRow>
                 {days.map((d) => {
                   const done = habitsStore.isDone(h.id, d);
-                  const disabled = isFutureDay(d);
+                  const disabled = dateKey(d) > dateKey(new Date());
                   return (
-                    <DayCell key={d.toISOString()}>
+                    <DayCell key={dateKey(d)}>
                       <DayLabel>{d.getDate()}</DayLabel>
                       <CellCheck
                         $done={done}
+                        aria-pressed={done}
                         $disabled={disabled}
                         type="button"
                         disabled={disabled}

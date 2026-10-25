@@ -22,13 +22,10 @@ function loadSettings(): SettingsState {
   }
 }
 
-function saveSettings(settings: SettingsState) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
-}
-
 export class SettingsStore {
   period: PeriodType = 'week';
   theme: ThemeType = 'light';
+  storageError: string | null = null;
 
   constructor() {
     makeAutoObservable(this);
@@ -38,7 +35,12 @@ export class SettingsStore {
   }
 
   private persist() {
-    saveSettings({ period: this.period, theme: this.theme });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ period: this.period, theme: this.theme }));
+      this.storageError = null;
+    } catch {
+      this.storageError = 'Не удалось сохранить настройки в браузере. Изменения действуют только в этой вкладке.';
+    }
   }
 
   setPeriod(period: PeriodType) {

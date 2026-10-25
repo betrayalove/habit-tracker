@@ -4,7 +4,7 @@ import { Button } from '@/components/ui';
 
 export const ThemeToggle = observer(function ThemeToggle() {
   return (
-    <Button $variant="secondary" onClick={() => settingsStore.toggleTheme()}>
+    <Button aria-label={settingsStore.theme === 'light' ? 'Тёмная тема' : 'Светлая тема'} $variant="secondary" onClick={() => settingsStore.toggleTheme()}>
       {settingsStore.theme === 'light' ? '☀️' : '🌙'}
     </Button>
   );

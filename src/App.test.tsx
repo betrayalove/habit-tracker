@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
 import { App } from './App';
@@ -11,6 +11,8 @@ function renderWithProviders(ui: React.ReactElement) {
 }
 
 beforeEach(() => {
+  window.history.replaceState({}, '', '/');
+  localStorage.clear();
   habitsStore.clearForTesting();
   settingsStore.resetForTesting();
 });
@@ -50,7 +52,7 @@ describe('HabitForm', () => {
     const user = userEvent.setup();
     renderWithProviders(<App />);
     await user.click(screen.getByRole('link', { name: /привычки/i }));
-    await user.type(screen.getByPlaceholderText(/название привычки/i), 'Бег');
+    await user.type(await screen.findByPlaceholderText(/название привычки/i), 'Бег');
     await user.click(screen.getByRole('button', { name: /добавить привычку/i }));
     expect(habitsStore.habits).toHaveLength(1);
     expect(habitsStore.habits[0].name).toBe('Бег');
@@ -62,7 +64,7 @@ describe('Settings', () => {
     const user = userEvent.setup();
     renderWithProviders(<App />);
     await user.click(screen.getByRole('link', { name: /настройки/i }));
-    await user.click(screen.getByRole('button', { name: /тёмная тема/i }));
+    await user.click(within(await screen.findByRole('region', { name: 'Тема' })).getByRole('button', { name: /тёмная тема/i }));
     expect(settingsStore.theme).toBe('dark');
   });
 });

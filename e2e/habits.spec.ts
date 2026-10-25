@@ -22,7 +22,7 @@ test.describe('Список привычек', () => {
     await page.getByRole('button', { name: /добавить привычку/i }).click();
     await page.getByRole('link', { name: /главная/i }).click();
     await expect(page.getByText('Пробежка')).toBeVisible();
-    await expect(page.getByRole('table')).toBeVisible();
+    await expect(page.getByRole('group', { name: 'Отметки: Пробежка' }).getByRole('button')).toHaveCount(7);
   });
 
   test('клик по ячейке дня ставит и снимает галочку выполнения', async ({ page }) => {

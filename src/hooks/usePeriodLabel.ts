@@ -1,13 +1,12 @@
 import { settingsStore } from '@/store';
+import { addDays, startOfWeek } from '@/shared/lib/dates';
 
 export function usePeriodLabel(periodOffset: number): string {
   const period = settingsStore.period;
   const now = new Date();
   if (period === 'week') {
-    const start = new Date(now);
-    start.setDate(now.getDate() - start.getDay() + 1 + periodOffset * 7);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
+    const start = addDays(startOfWeek(now), periodOffset * 7);
+    const end = addDays(start, 6);
     return `${start.getDate()}.${start.getMonth() + 1} – ${end.getDate()}.${end.getMonth() + 1}`;
   }
   const month = now.getMonth() + periodOffset;

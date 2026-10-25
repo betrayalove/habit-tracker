@@ -19,7 +19,7 @@ export const SettingsPage = observer(function SettingsPage() {
     <PageLayout>
       <Nav />
       <h1>Настройки</h1>
-      <Section>
+      <Section as="section" aria-label="Тема">
         <SectionTitle>Тема</SectionTitle>
         <ThemeToggle />
       </Section>

@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react-lite';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { ThemeProvider } from 'styled-components';
-import { settingsStore } from '@/store';
+import { habitsStore, settingsStore } from '@/store';
 import { LIGHT_THEME, DARK_THEME } from '@/styles/theme';
 import { GlobalStyles } from '@/styles/GlobalStyles';
 import { MainPage, HabitsPage, SettingsPage, StatsPage } from '@/pages';
@@ -19,6 +19,8 @@ const AppRoutes = observer(function AppRoutes() {
     <ThemeProvider theme={theme}>
       <GlobalStyles />
       <PageBackground>
+        {(habitsStore.storageError || settingsStore.storageError) && <p role="alert">{habitsStore.storageError || settingsStore.storageError}</p>}
+        {habitsStore.legacyImported && <p role="note">Старые отметки перенесены с исходными датами. Из-за ошибки часового пояса в прежней версии некоторые дни могут быть смещены; проверьте их в календаре. Резервная копия сохранена в браузере.</p>}
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/habits" element={<HabitsPage />} />

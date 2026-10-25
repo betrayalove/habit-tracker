@@ -8,7 +8,7 @@
 
 - Сетка привычек по дням (неделя/месяц) с отметками выполнения
 - CRUD привычек (название, цвет, иконка, цель в неделю)
-- Статистика по выполнению
+- Статистика: выполненные дни, текущая серия и прогресс недельной цели
 - Настройки: светлая/тёмная тема, период (неделя/месяц)
 - Сохранение в localStorage
 
@@ -16,7 +16,7 @@
 
 - **Framework:** React 18, TypeScript
 - **Сборка:** Vite
-- **Маршрутизация:** React Router v6
+- **Маршрутизация:** React Router v7
 - **Состояние:** MobX (mobx, mobx-react-lite)
 - **Стили:** styled-components (тема из src/shared/styles/tokens.ts)
 - **Тесты:** Jest, React Testing Library; E2E: Playwright
@@ -27,12 +27,16 @@
 
 ## Команды
 
-- `npm install` — установка зависимостей
+- `nvm use` — Node.js 24 (нужен npm 11; версия задана в `.nvmrc`)
+- `npm ci` — воспроизводимая установка зависимостей
 - `npm run dev` — запуск dev-сервера (http://localhost:5173)
+- `npm run typecheck` — проверка типов приложения и конфигурации без генерации файлов
 - `npm run build` — сборка для продакшена (TypeScript + Vite)
 - `npm run preview` — просмотр собранной сборки
 - `npm run test` — unit-тесты (Jest)
-- `npm run e2e` — E2E (Playwright)
+- `npx playwright install chromium` — установка браузера для E2E
+- `npm run e2e` — E2E собранного приложения (сначала `npm run build`); preview запускается на http://127.0.0.1:5374
+- `PORT=5375 npm run e2e` — другой локальный порт; `BASE_URL=https://example.vercel.app npm run e2e` — проверка готового deployment
 - `npm run e2e:ui` — E2E с UI Playwright
 
 ## Авторизация
@@ -51,3 +55,16 @@ Backend не предусмотрен. Приложение полностью �
 - **src/styles** — theme.ts (LIGHT_THEME, DARK_THEME, SPACING и др.), GlobalStyles
 - **src/shared/styles** — tokens.ts (единые дизайн-токены)
 - **src/hooks**, **src/types** — хуки и типы
+
+
+## Календарь и сохранённые данные
+
+Неделя начинается в понедельник, включая воскресенье текущей недели. Все новые отметки используют локальные календарные ключи `YYYY-MM-DD`; время суток и UTC-смещение не меняют день. Серия продолжается с последнего выполненного дня (сегодня либо вчера); пропущенный предыдущий день её прерывает. Недельная цель считается по уникальным выполненным дням текущей недели до сегодняшнего дня.
+
+Данные записываются атомарно одним snapshot с `version: 2` в `habit-tracker-data-v2`. При первом чтении старые привычки и отметки проверяются, дубликаты и некорректные записи исключаются. Исходные `habit-tracker-habits` и `habit-tracker-marks` остаются в localStorage как резервная копия. Старые отметки сохраняют прежние ключи: определить, какие были записаны месячной UTC-сеткой, невозможно. Интерфейс предлагает проверить их даты; ошибочную отметку можно снять и поставить на нужный день. При повреждении JSON snapshot оригинал сохраняется в `habit-tracker-data-v2-recovery` перед первой новой записью. Ошибки доступа/квоты хранилища показываются в интерфейсе, изменения остаются в памяти до закрытия вкладки.
+
+## CI и Vercel
+
+GitHub Actions на push в `main` и pull request выполняет `npm ci`, typecheck, unit-тесты, аудит зависимостей, production build и Playwright Chromium. E2E проверяют воскресенья, первый день месяца, совпадение недельных/месячных отметок, миграцию и сбои localStorage, CRUD и прямые маршруты. Тесты дат фиксируют часовой пояс Asia/Yekaterinburg.
+
+Для Vercel подключите GitHub-репозиторий `betrayalove/habit-tracker`, выберите production branch `main` и Node.js 24.x. `vercel.json` задаёт `npm ci`, `npm run build`, каталог `dist` и SPA fallback для прямых `/habits`, `/stats`, `/settings`. Переменные окружения и backend не требуются. Подключённая Git integration автоматически создаёт deployment после push; доступ к production должен быть публичным. После deployment проверьте прямые URL и обновление страниц.

@@ -81,6 +81,10 @@ export const HabitForm = observer(function HabitForm({ initial, onSuccess }: Hab
       setError('Введите название привычки');
       return;
     }
+    if (!Number.isInteger(goalPerWeek) || goalPerWeek < 1 || goalPerWeek > 7) {
+      setError('Укажите цель от 1 до 7 раз в неделю');
+      return;
+    }
     if (initial) {
       habitsStore.updateHabit(initial.id, { name: trimmed, color, icon, goalPerWeek });
     } else {
@@ -106,13 +110,13 @@ export const HabitForm = observer(function HabitForm({ initial, onSuccess }: Hab
       <Row>
         <span>Цвет:</span>
         {FORM_COLORS.map((c) => (
-          <ColorDot key={c} type="button" $color={c} $active={color === c} onClick={() => setColor(c)} aria-label={`Цвет ${c}`} />
+          <ColorDot key={c} type="button" $color={c} $active={color === c} onClick={() => setColor(c)} aria-label={`Цвет ${c}`} aria-pressed={color === c} />
         ))}
       </Row>
       <Row>
         <span>Иконка:</span>
         {FORM_ICONS.map((i) => (
-          <IconBtn key={i} type="button" $active={icon === i} onClick={() => setIcon(i)} aria-label={`Иконка ${i}`}>
+          <IconBtn key={i} type="button" $active={icon === i} onClick={() => setIcon(i)} aria-label={`Иконка ${i}`} aria-pressed={icon === i}>
             {i}
           </IconBtn>
         ))}
@@ -129,7 +133,7 @@ export const HabitForm = observer(function HabitForm({ initial, onSuccess }: Hab
           style={{ width: 60, padding: 8, borderRadius: 6 }}
         />
       </Row>
-      {error && <ErrorText>{error}</ErrorText>}
+      {error && <ErrorText role="alert">{error}</ErrorText>}
       <Button type="submit" $variant="primary">
         {initial ? 'Сохранить' : 'Добавить привычку'}
       </Button>

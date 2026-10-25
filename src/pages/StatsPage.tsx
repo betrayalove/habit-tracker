@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { dateKey, getStreak, weeklyProgress } from '@/shared/lib/dates';
 import { observer } from 'mobx-react-lite';
 import { habitsStore } from '@/store';
 import { PageLayout } from '@/components/ui';
@@ -17,25 +18,6 @@ const EmptySection = styled(Section)`
   color: ${({ theme }) => theme.textSecondary};
 `;
 
-function getStreak(doneDates: string[]): number {
-  if (doneDates.length === 0) return 0;
-  const sorted = [...doneDates].sort();
-  let streak = 0;
-  const today = new Date().toISOString().slice(0, 10);
-  let expect = today;
-  for (let i = sorted.length - 1; i >= 0; i--) {
-    if (sorted[i] === expect) {
-      streak++;
-      const d = new Date(expect);
-      d.setDate(d.getDate() - 1);
-      expect = d.toISOString().slice(0, 10);
-    } else if (sorted[i] < expect) {
-      break;
-    }
-  }
-  return streak;
-}
-
 export const StatsPage = observer(function StatsPage() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const habits = habitsStore.habits;
@@ -52,7 +34,8 @@ export const StatsPage = observer(function StatsPage() {
 
   const validId = selectedId && habits.some((h) => h.id === selectedId) ? selectedId : habits[0].id;
   const habit = habitsStore.getHabit(validId);
-  const doneDates = habit ? habitsStore.getDoneDates(habit.id) : [];
+  const doneDates = habit ? habitsStore.getDoneDates(habit.id).filter((day) => day <= dateKey(new Date())) : [];
+  const progress = weeklyProgress(doneDates);
   const streak = getStreak(doneDates);
 
   return (
@@ -62,6 +45,7 @@ export const StatsPage = observer(function StatsPage() {
       <Section>
         <h2>Выберите привычку</h2>
         <select
+          aria-label="Выберите привычку"
           value={validId}
           onChange={(e) => setSelectedId(e.target.value)}
           style={{ padding: SPACING.xs, borderRadius: 6, minWidth: 200 }}
@@ -77,6 +61,7 @@ export const StatsPage = observer(function StatsPage() {
         <Section>
           <h2>{habit.icon} {habit.name}</h2>
           <p>Выполнено дней за всё время: <strong>{doneDates.length}</strong></p>
+          <p>Цель на эту неделю: <strong>{progress}/{habit.goalPerWeek}</strong> {progress >= habit.goalPerWeek ? '— достигнута' : '— в процессе'}</p>
           <p>Текущая серия (streak): <strong>{streak}</strong> дней подряд</p>
         </Section>
       )}
