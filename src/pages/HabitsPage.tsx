@@ -13,7 +13,10 @@ const HabitRow = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: ${SPACING.sm}px;
-  border-radius: 8px;
+  border-radius: 12px;
+  border: 1px solid ${({ theme }) => theme.border};
+  gap: ${SPACING.sm}px;
+  flex-wrap: wrap;
   background: ${({ theme }) => theme.surface};
   box-shadow: ${({ theme }) => theme.shadow};
   margin-bottom: ${SPACING.xs}px;
@@ -23,7 +26,11 @@ const HabitInfo = styled.div<{ $color: string }>`
   display: flex;
   align-items: center;
   gap: ${SPACING.xs}px;
+  min-width: 0;
+  flex: 1 1 280px;
+  flex-wrap: wrap;
   .dot {
+    flex-shrink: 0;
     width: 12px;
     height: 12px;
     border-radius: 50%;
@@ -33,6 +40,7 @@ const HabitInfo = styled.div<{ $color: string }>`
 
 const Actions = styled.div`
   display: flex;
+  flex-wrap: wrap;
   gap: ${SPACING.xs}px;
 `;
 

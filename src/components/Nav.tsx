@@ -4,9 +4,9 @@ import { SPACING } from '@/styles/theme';
 import { ThemeToggle } from './ThemeToggle';
 
 const Header = styled.header`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
   gap: ${SPACING.sm}px;
   margin-bottom: ${SPACING.md}px;
   flex-wrap: wrap;
@@ -14,20 +14,21 @@ const Header = styled.header`
 
 const NavWrap = styled.nav`
   display: flex;
-  gap: ${SPACING.sm}px;
+  gap: ${SPACING.xs}px;
   flex-wrap: wrap;
+  min-width: 0;
 `;
 
 const Link = styled(NavLink)`
   padding: ${SPACING.xs}px ${SPACING.sm}px;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 500;
   color: ${({ theme }) => theme.textSecondary};
 
   &.active {
-    color: ${({ theme }) => theme.primary};
-    background: ${({ theme }) => theme.surface};
-    box-shadow: ${({ theme }) => theme.shadow};
+    color: ${({ theme }) => theme.link};
+    background: ${({ theme }) => theme.mutedSurface};
+    text-decoration: none;
   }
 `;
 

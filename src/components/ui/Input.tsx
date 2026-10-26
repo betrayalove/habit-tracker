@@ -5,7 +5,7 @@ export const Input = styled.input`
   width: 100%;
   padding: ${SPACING.xs}px ${SPACING.sm}px;
   border-radius: ${BORDER_RADIUS.button}px;
-  border: 1px solid ${({ theme }) => theme.secondary};
+  border: 1px solid ${({ theme }) => theme.border};
   background: ${({ theme }) => theme.surface};
   color: ${({ theme }) => theme.text};
 
@@ -14,7 +14,6 @@ export const Input = styled.input`
   }
 
   &:focus {
-    outline: none;
-    border-color: ${({ theme }) => theme.primary};
+    border-color: ${({ theme }) => theme.link};
   }
 `;

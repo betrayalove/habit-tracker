@@ -48,7 +48,7 @@ export const StatsPage = observer(function StatsPage() {
           aria-label="Выберите привычку"
           value={validId}
           onChange={(e) => setSelectedId(e.target.value)}
-          style={{ padding: SPACING.xs, borderRadius: 6, minWidth: 200 }}
+          style={{ padding: SPACING.xs, borderRadius: 8, width: '100%', maxWidth: 400 }}
         >
           {habits.map((h) => (
             <option key={h.id} value={h.id}>

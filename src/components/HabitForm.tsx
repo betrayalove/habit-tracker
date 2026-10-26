@@ -21,22 +21,25 @@ const Row = styled.div`
   flex-wrap: wrap;
   gap: ${SPACING.xs}px;
   align-items: center;
+  @media (max-width: 767px) { > span:first-child { flex-basis: 100%; } }
 `;
 
 const ColorDot = styled.button<{ $color: string; $active?: boolean }>`
-  width: 28px;
-  height: 28px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: ${({ $color }) => $color};
-  border: 2px solid ${({ $active, theme }) => ($active ? theme.primary : 'transparent')};
+  border: 2px solid ${({ $active, theme }) => ($active ? theme.link : theme.border)};
+  box-shadow: ${({ $active, theme }) => $active ? `0 0 0 2px ${theme.surface}, 0 0 0 4px ${theme.link}` : 'none'};
   cursor: pointer;
 `;
 
 const IconBtn = styled.button<{ $active?: boolean }>`
   width: 36px;
   height: 36px;
-  border-radius: 6px;
-  border: 2px solid ${({ $active, theme }) => ($active ? theme.primary : 'transparent')};
+  border-radius: 8px;
+  border: 2px solid ${({ $active, theme }) => ($active ? theme.link : theme.border)};
+  box-shadow: ${({ $active, theme }) => $active ? `0 0 0 2px ${theme.surface}, 0 0 0 4px ${theme.link}` : 'none'};
   background: ${({ theme }) => theme.surface};
   font-size: 1.2rem;
   cursor: pointer;
@@ -71,7 +74,7 @@ export const HabitForm = observer(function HabitForm({ initial, onSuccess }: Hab
       setIcon(FORM_ICONS[0]);
       setGoalPerWeek(5);
     }
-  }, [initial?.id]);
+  }, [initial]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -130,7 +133,7 @@ export const HabitForm = observer(function HabitForm({ initial, onSuccess }: Hab
           max={7}
           value={goalPerWeek}
           onChange={(e) => setGoalPerWeek(Number(e.target.value) || 1)}
-          style={{ width: 60, padding: 8, borderRadius: 6 }}
+          style={{ width: 88 }}
         />
       </Row>
       {error && <ErrorText role="alert">{error}</ErrorText>}

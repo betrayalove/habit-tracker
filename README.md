@@ -30,6 +30,7 @@
 - `nvm use` — Node.js 24 (нужен npm 11; версия задана в `.nvmrc`)
 - `npm ci` — воспроизводимая установка зависимостей
 - `npm run dev` — запуск dev-сервера (http://localhost:5173)
+- `npm run lint` — ESLint + React Hooks, без предупреждений
 - `npm run typecheck` — проверка типов приложения и конфигурации без генерации файлов
 - `npm run build` — сборка для продакшена (TypeScript + Vite)
 - `npm run preview` — просмотр собранной сборки
@@ -68,3 +69,10 @@ Backend не предусмотрен. Приложение полностью �
 GitHub Actions на push в `main` и pull request выполняет `npm ci`, typecheck, unit-тесты, аудит зависимостей, production build и Playwright Chromium. E2E проверяют воскресенья, первый день месяца, совпадение недельных/месячных отметок, миграцию и сбои localStorage, CRUD и прямые маршруты. Тесты дат фиксируют часовой пояс Asia/Yekaterinburg.
 
 Для Vercel подключите GitHub-репозиторий `betrayalove/habit-tracker`, выберите production branch `main` и Node.js 24.x. `vercel.json` задаёт `npm ci`, `npm run build`, каталог `dist` и SPA fallback для прямых `/habits`, `/stats`, `/settings`. Переменные окружения и backend не требуются. Подключённая Git integration автоматически создаёт deployment после push; доступ к production должен быть публичным. После deployment проверьте прямые URL и обновление страниц.
+
+
+## Дизайн и визуальные проверки
+
+Light/dark палитры заданы в `src/shared/styles/tokens.ts`. Общие контролы используют контрастные подписи, видимый keyboard focus, радиусы 8/12 px и отступы на основе шага 8 px. Inter поставляется локально, поэтому внешний Google Fonts не нужен. Контейнер ограничен 1280 px, поля — 16 px на mobile и 32 px на desktop; недельная и месячная сетки сохраняют семь колонок.
+
+`npm run e2e -- e2e/design.spec.ts` проверяет все четыре страницы в обеих темах при 1440 и 390 px: цвета текста/полей/CTA, Inter, отступы, отсутствие горизонтального overflow, выравнивание календаря и вычисленный WCAG contrast для видимого текста. Скриншоты и `metrics.json` сохраняются в `test-results/design-*`. Это адресная проверка интерфейса, а не полный аудит доступности.

@@ -13,14 +13,23 @@ const PageBackground = styled.div`
   min-height: 100vh;
 `;
 
+const Notice = styled.p`
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 16px 32px;
+  border-bottom: 1px solid ${({ theme }) => theme.border};
+  color: ${({ theme }) => theme.textSecondary};
+  @media (max-width: 767px) { padding: 16px; }
+`;
+
 const AppRoutes = observer(function AppRoutes() {
   const theme = settingsStore.theme === 'dark' ? DARK_THEME : LIGHT_THEME;
   return (
     <ThemeProvider theme={theme}>
       <GlobalStyles />
       <PageBackground>
-        {(habitsStore.storageError || settingsStore.storageError) && <p role="alert">{habitsStore.storageError || settingsStore.storageError}</p>}
-        {habitsStore.legacyImported && <p role="note">Старые отметки перенесены с исходными датами. Из-за ошибки часового пояса в прежней версии некоторые дни могут быть смещены; проверьте их в календаре. Резервная копия сохранена в браузере.</p>}
+        {(habitsStore.storageError || settingsStore.storageError) && <Notice role="alert">{habitsStore.storageError || settingsStore.storageError}</Notice>}
+        {habitsStore.legacyImported && <Notice role="note">Старые отметки перенесены с исходными датами. Из-за ошибки часового пояса в прежней версии некоторые дни могут быть смещены; проверьте их в календаре. Резервная копия сохранена в браузере.</Notice>}
         <Routes>
           <Route path="/" element={<MainPage />} />
           <Route path="/habits" element={<HabitsPage />} />
